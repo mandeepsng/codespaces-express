@@ -22,8 +22,7 @@ app.get('/demo', (req, res) => {
 })
 
 app.post('/convert-to-pdf', async (req, res) => {
-  const url = req.body.url ;  // Default URL if not provided
-  const outputPath = req.body.output || 'output.pdf';  // Default output path if not provided
+  const url = req.body.url;
 
   try {
       const browser = await puppeteer.launch();
@@ -38,15 +37,22 @@ app.post('/convert-to-pdf', async (req, res) => {
           document.body.style.backgroundColor = 'white';
       });
 
+      // Wait for a moment to ensure styles are applied
+      await page.waitForTimeout(1000);
+
       // Generate PDF
-      const pdfBuffer = await page.pdf({ format: 'A4', printBackground: true });
+      const pdfBuffer = await page.pdf({
+          format: 'A4',
+          printBackground: true,
+          displayHeaderFooter: false  // Set to true if you want headers and footers
+      });
 
       // Close the browser
       await browser.close();
 
       // Set the response headers for PDF download
       res.setHeader('Content-Type', 'application/pdf');
-      res.setHeader('Content-Disposition', `attachment; filename=${outputPath}`);
+      res.setHeader('Content-Disposition', 'attachment; filename=output.pdf');
 
       // Send the PDF as the response
       res.send(pdfBuffer);
@@ -57,7 +63,6 @@ app.post('/convert-to-pdf', async (req, res) => {
       res.status(500).send('Internal Server Error');
   }
 });
-
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
