@@ -18,7 +18,7 @@ app.get('/ul-to-pdf', (req, res) => {
 })
 
 app.get('/demo', (req, res) => {
-  res.send('demo testing!')
+  res.send('Hello world!')
 })
 
 app.post('/convert-to-pdf', async (req, res) => {
